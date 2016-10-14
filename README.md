@@ -1,7 +1,10 @@
+# Making API - Server
+
 We're going to make our own API for a school database.
 
 1.  Start by making a package.json and including our dependencies.
 
+```javascript
   {
     "dependencies": {
       "body-parser": "^1.14.1",
@@ -9,12 +12,14 @@ We're going to make our own API for a school database.
       "mongoose": "^4.1.11"
     }
   }
+```
 
 2.  Now in Git Bash in the current folder, run `npm install`. 
     It should take a while to install all the dependencies.
 
 3.  Make a server.js file and include all our dependencies, and configure them.
 
+```javascript
     var
       express = require('express'),
       mongoose = require('mongoose'),
@@ -27,11 +32,13 @@ We're going to make our own API for a school database.
       extended: true,
     }));
     app.use(bodyParser.json());
+```
 
 4.  That code makes sure we can send form data (urlencoded) and json 
     data to our server and send it back. Now we want to create a
     middleware, this makes sure the data we're receiving isn't malicious.
 
+``` javascript
   // Add headers for http requests
   app.use(function (req, res, next) {
 
@@ -51,15 +58,19 @@ We're going to make our own API for a school database.
       // Pass to next layer of middleware
       next();
   });
+```
 
 5.  Now we can connect to our mongo database.
 
+```javascript
   // Connect to our mongo database
   mongoose.connect('mongodb://localhost/school');
+```
 
 6.  To access and send data, we need to create `routes`. Create a 
     folder named routes and put an `index.js` file in it.
 
+```javascript
   var
     express = require('express'),
     fs = require('fs'),
@@ -97,12 +108,14 @@ We're going to make our own API for a school database.
       });
     };
   };
+```
 
 7.  You don't have to worry about that code too much, basically 
     you can now create any and as many routes as you want without having to 
     manually instantiate them. Your folder structure with routes will 
     look something like this:
 
+```
   project folder
     -- routes
       -- student
@@ -110,16 +123,20 @@ We're going to make our own API for a school database.
         -- update.js
         -- etc.
       -- index.js
+```
 
 8.  Now before we make any routes, we need a Student model. Create a
     models folder so the folder structure looks like this:
 
+```
   project folder
     -- routes
     -- models
+```
 
 9.  Create a `Student.js` file resembling this:
 
+```javascript
   var mongoose = require('mongoose');
 
   /**
@@ -153,6 +170,7 @@ We're going to make our own API for a school database.
 
   // Allow us to export model to other files (e.x. routes)
   module.exports = mongoose.model('Student', Student);
+```
 
 10. The code is pretty self-explanatory. We create a Schema (model)
     that has some instance variables, assign types, defaults, and 
@@ -161,6 +179,7 @@ We're going to make our own API for a school database.
 11. Now we can make some routes. In the routes folder, make a folder
     called `student` and make a `create.js` file.
 
+```javascript
   var
     mongoose = require('mongoose'),
     Student = require('./../../models/Student');
@@ -178,6 +197,7 @@ We're going to make our own API for a school database.
       });
     });
   };
+```
 
 12. Notice how we require the Student model from earlier and specify 
     the route at which we can create a student. Our `req.body` is the
@@ -185,7 +205,8 @@ We're going to make our own API for a school database.
     populate the student with. Similar files can be created for
     list, delete, update, and find.
 
-  --  list.js
+```javascript
+  // list.js
   var
     mongoose = require('mongoose'),
     Student = require('./../../models/Student');
@@ -204,7 +225,7 @@ We're going to make our own API for a school database.
     });
   };
 
-  -- find.js
+  //find.js
   var
     mongoose = require('mongoose'),
     Student = require('./../../models/Student');
@@ -225,7 +246,7 @@ We're going to make our own API for a school database.
     });
   };
 
-  --  delete.js
+  // delete.js
   var
     mongoose = require('mongoose'),
     Student = require('./../../models/Student');
@@ -244,7 +265,7 @@ We're going to make our own API for a school database.
     });
   };
 
-  --  update.js (we have to find AND update a student)
+  // update.js (we have to find AND update a student)
   var
     mongoose = require('mongoose'),
     Student = require('./../../models/Student');
@@ -263,19 +284,22 @@ We're going to make our own API for a school database.
       });
     });
   };
+```
 
 13. Now in the server.js file, instantiate your routes and
     start the server.
 
+```javascript
   // Instantiate all our routes
   require('./routes/index')(app);
 
   // Start server
   app.listen(port);
   console.log('Magic happens on port:', port);
+```
 
 14. In the Git Bash anywhere, run `mongod` (do not close this
     whenever you are testing your api!). In the Git Bash in
     the current directory, run `node server.js`.
 
-15. Use a program like Postman in Chrome to test the api. 
+15. Use a program like Postman in Chrome to test the api.
